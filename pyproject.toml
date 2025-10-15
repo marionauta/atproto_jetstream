@@ -12,3 +12,4 @@ dependencies = [
 
 [project.urls]
 Repository = "https://tangled.org/@nauta.one/atproto_jetstream"
+Issues = "https://tangled.org/@nauta.one/atproto_jetstream/issues"

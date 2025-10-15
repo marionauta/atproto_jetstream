@@ -19,7 +19,7 @@ from atproto_jetstream import Jetstream
 async def main():
     async with Jetstream("jetstream1.us-east.bsky.network") as stream:
         async for event in stream:
-        match event.kind:
+            match event.kind:
                 case "account":
                     print(event.account)
                 case "identity":
