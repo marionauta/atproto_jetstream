@@ -1,10 +1,3 @@
-# atproto_jetstream
-
-Small, typed, and async package to receive [Jetstream][jetstream] events from the [AT Protocol][atproto].
-
-## usage
-
-```python
 from asyncio import run
 from atproto_jetstream import Jetstream
 
@@ -23,7 +16,3 @@ async def main():
 
 if __name__ == "__main__":
     run(main())
-```
-
-[atproto]: https://atproto.com/
-[jetstream]: https://docs.bsky.app/blog/jetstream
