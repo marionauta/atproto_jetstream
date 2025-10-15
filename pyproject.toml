@@ -9,3 +9,6 @@ requires-python = ">=3.12"
 dependencies = [
     "aiohttp>=3.13.0",
 ]
+
+[project.urls]
+Repository = "https://tangled.org/@nauta.one/atproto_jetstream"

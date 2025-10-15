@@ -4,14 +4,14 @@ from atproto_jetstream import Jetstream
 
 async def main():
     async with Jetstream("jetstream1.us-east.bsky.network") as stream:
-        async for message in stream:
-            match message.kind:
+        async for event in stream:
+            match event.kind:
                 case "account":
-                    print(message.account)
+                    print(event.account)
                 case "identity":
-                    print(message.identity)
+                    print(event.identity)
                 case "commit":
-                    print(message.commit)
+                    print(event.commit)
 
 
 if __name__ == "__main__":
