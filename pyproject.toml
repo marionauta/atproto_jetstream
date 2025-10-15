@@ -1,0 +1,11 @@
+[project]
+name = "atproto_jetstream"
+version = "0.1.0"
+description = "Receive Jetstream events from the AT Protocol"
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
+requires-python = ">=3.12"
+dependencies = [
+    "aiohttp>=3.13.0",
+]
