@@ -110,8 +110,8 @@ wheels = [
 ]
 
 [[package]]
-name = "atproto-jetstream"
-version = "0.1.1"
+name = "atproto_jetstream"
+version = "0.2.0"
 source = { virtual = "." }
 dependencies = [
     { name = "aiohttp" },

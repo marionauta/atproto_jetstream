@@ -1,6 +1,6 @@
 [project]
 name = "atproto_jetstream"
-version = "0.1.1"
+version = "0.2.0"
 description = "Receive Jetstream events from the AT Protocol"
 readme = "README.md"
 license = "MIT"
