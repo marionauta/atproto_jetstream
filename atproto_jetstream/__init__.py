@@ -1,3 +1,4 @@
+from aiohttp import WSMsgType
 from aiohttp.client import ClientSession, ClientWebSocketResponse
 from types import TracebackType
 from typing import Any, Literal, NamedTuple
@@ -115,7 +116,11 @@ class Jetstream:
     async def __anext__(self) -> JetstreamEvent:
         if not self._session:
             raise Exception("there's no _session")
+
         wsm = await self._session.__anext__()
+        while wsm.type != WSMsgType.TEXT:
+            wsm = await self._session.__anext__()
+
         json: dict[str, Any] = wsm.json()
         match json["kind"]:
             case "account":
