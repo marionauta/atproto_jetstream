@@ -49,9 +49,9 @@ class JetstreamCommitEvent(NamedTuple):
 class JetstreamIdentityEvent(NamedTuple):
     class Identity(NamedTuple):
         did: str
-        handle: str
         seq: int
         time: str
+        handle: str | None = None
 
     did: str
     time_us: int
