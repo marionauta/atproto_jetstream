@@ -4,8 +4,11 @@ from atproto_jetstream import Jetstream, JetstreamOptions
 
 
 async def main():
-    options = JetstreamOptions(compress=True)
-    async with Jetstream("jetstream1.us-east.bsky.network", options=options) as stream:
+    options = JetstreamOptions(
+        endpoint="wss://jetstream1.us-east.bsky.network/subscribe",
+        compress=True,
+    )
+    async with Jetstream(options) as stream:
         async for event in stream:
             match event.kind:
                 case "account":

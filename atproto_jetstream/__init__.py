@@ -10,6 +10,7 @@ from aiohttp.client import ClientSession, ClientWebSocketResponse
 
 
 class JetstreamOptions(NamedTuple):
+    endpoint: str = "wss://jetstream1.us-east.bsky.network/subscribe"
     wanted_collections: list[str] = []
     wanted_dids: list[str] = []
     max_message_size_bytes: int | None = None
@@ -85,14 +86,12 @@ JetstreamEvent = JetstreamAccountEvent | JetstreamCommitEvent | JetstreamIdentit
 
 
 class Jetstream:
-    _url: str
     _options: JetstreamOptions
     _client: ClientSession
     _session: ClientWebSocketResponse | None
     _zstd_dict: ZstdDict
 
-    def __init__(self, host: str, options: JetstreamOptions | None = None) -> None:
-        self._url = host
+    def __init__(self, options: JetstreamOptions | None = None) -> None:
         self._options = options or JetstreamOptions()
         self._client = ClientSession(auto_decompress=True)
         self._session = None
@@ -100,9 +99,9 @@ class Jetstream:
             with open(Path(__file__).with_name("zstd_dictionary"), "rb") as file:
                 self._zstd_dict = ZstdDict(file.read())
 
-    async def __aenter__(self) -> "Jetstream":
+    async def __aenter__(self) -> Jetstream:
         _ = await self._client.__aenter__()
-        url = f"wss://{self._url}/subscribe?{self._options.to_query()}"
+        url = f"{self._options.endpoint}?{self._options.to_query()}"
         self._session = await self._client.ws_connect(url)
         _ = await self._session.__aenter__()
         return self
@@ -117,7 +116,7 @@ class Jetstream:
             await self._session.__aexit__(exc_type, exc_val, exc_tb)
         await self._client.__aexit__(exc_type, exc_val, exc_tb)
 
-    def __aiter__(self):
+    def __aiter__(self) -> Jetstream:
         if self._session:
             _ = self._session.__aiter__()
         return self

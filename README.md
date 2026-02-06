@@ -13,11 +13,12 @@ Using your package manager, install the [`atproto_jetstream`][pypi] dependency.
 
 ```python
 from asyncio import run
-from atproto_jetstream import Jetstream
+from atproto_jetstream import Jetstream, JetstreamOptions
 
 
 async def main():
-    async with Jetstream("jetstream1.us-east.bsky.network") as stream:
+    options = JetstreamOptions("wss://jetstream1.us-east.bsky.network/subscribe")
+    async with Jetstream(options) as stream:
         async for event in stream:
             match event.kind:
                 case "account":
