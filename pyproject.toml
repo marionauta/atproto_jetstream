@@ -13,3 +13,7 @@ dependencies = [
 [project.urls]
 Repository = "https://tangled.org/@nauta.one/atproto_jetstream"
 Issues = "https://tangled.org/@nauta.one/atproto_jetstream/issues"
+
+[build-system]
+requires = ["uv_build>=0.10.0,<0.11.0"]
+build-backend = "uv_build"

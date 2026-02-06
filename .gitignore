@@ -9,4 +9,4 @@ wheels/
 # Virtual environments
 .venv
 
-atproto_jetstream/zstd_dictionary
+src/atproto_jetstream/zstd_dictionary
