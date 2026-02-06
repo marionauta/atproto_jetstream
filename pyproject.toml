@@ -11,8 +11,9 @@ dependencies = [
 ]
 
 [project.urls]
-Repository = "https://tangled.org/@nauta.one/atproto_jetstream"
+Changelog = "https://tangled.org/nauta.one/atproto_jetstream/blob/main/CHANGELOG.md"
 Issues = "https://tangled.org/@nauta.one/atproto_jetstream/issues"
+Repository = "https://tangled.org/@nauta.one/atproto_jetstream"
 
 [build-system]
 requires = ["uv_build>=0.10.0,<0.11.0"]
