@@ -32,6 +32,16 @@ if __name__ == "__main__":
     run(main())
 ```
 
+## development
+
+You need to download the [`zstd_dictionary`][zstd_dictionary] file from the Jetstream repository.
+A Make recipe is provided to do so:
+
+```sh
+make atproto_jetstream/zstd_dictionary
+```
+
 [atproto]: https://atproto.com/
 [jetstream]: https://docs.bsky.app/blog/jetstream
 [pypi]: https://pypi.org/project/atproto_jetstream/
+[zstd_dictionary]: https://github.com/bluesky-social/jetstream/tree/main/pkg/models

@@ -1,8 +1,12 @@
-from aiohttp import WSMsgType
-from aiohttp.client import ClientSession, ClientWebSocketResponse
+from compression.zstd import ZstdDict, decompress
+from json import loads as json_loads
+from pathlib import Path
 from types import TracebackType
 from typing import Any, Literal, NamedTuple
 from urllib.parse import urlencode
+
+from aiohttp import WSMsgType
+from aiohttp.client import ClientSession, ClientWebSocketResponse
 
 
 class JetstreamOptions(NamedTuple):
@@ -10,6 +14,7 @@ class JetstreamOptions(NamedTuple):
     wanted_dids: list[str] = []
     max_message_size_bytes: int | None = None
     cursor: int | None = None
+    compress: bool = False
 
     def to_query(self) -> str:
         params: list[tuple[str, str]] = []
@@ -21,6 +26,8 @@ class JetstreamOptions(NamedTuple):
             params.append(("maxMessageSizeBytes", str(self.max_message_size_bytes)))
         if self.cursor is not None:
             params.append(("cursor", str(self.cursor)))
+        if self.compress:
+            params.append(("compress", "true"))
         return urlencode(params)
 
 
@@ -39,7 +46,7 @@ class JetstreamCommitEvent(NamedTuple):
         record: dict[str, Any]
         cid: str
 
-    type Commit = DeleteCommit | CreateUpdateCommit
+    Commit = DeleteCommit | CreateUpdateCommit
 
     did: str
     time_us: int
@@ -74,22 +81,24 @@ class JetstreamAccountEvent(NamedTuple):
     account: Account
 
 
-type JetstreamEvent = (
-    JetstreamAccountEvent | JetstreamCommitEvent | JetstreamIdentityEvent
-)
+JetstreamEvent = JetstreamAccountEvent | JetstreamCommitEvent | JetstreamIdentityEvent
 
 
 class Jetstream:
     _url: str
-    _options: "JetstreamOptions"
+    _options: JetstreamOptions
     _client: ClientSession
     _session: ClientWebSocketResponse | None
+    _zstd_dict: ZstdDict
 
     def __init__(self, host: str, options: JetstreamOptions | None = None) -> None:
         self._url = host
         self._options = options or JetstreamOptions()
-        self._client = ClientSession()
+        self._client = ClientSession(auto_decompress=True)
         self._session = None
+        if self._options.compress:
+            with open(Path(__file__).with_name("zstd_dictionary"), "rb") as file:
+                self._zstd_dict = ZstdDict(file.read())
 
     async def __aenter__(self) -> "Jetstream":
         _ = await self._client.__aenter__()
@@ -117,11 +126,16 @@ class Jetstream:
         if not self._session:
             raise Exception("there's no _session")
 
+        json: dict[str, Any] = {}
         wsm = await self._session.__anext__()
-        while wsm.type != WSMsgType.TEXT:
-            wsm = await self._session.__anext__()
+        while len(json) == 0:
+            if wsm.type == WSMsgType.TEXT and not self._options.compress:
+                json = wsm.json()
+            elif wsm.type == WSMsgType.BINARY and self._options.compress:
+                json = json_loads(decompress(data=wsm.data, zstd_dict=self._zstd_dict))
+            else:
+                wsm = await self._session.__anext__()
 
-        json: dict[str, Any] = wsm.json()
         match json["kind"]:
             case "account":
                 account = JetstreamAccountEvent.Account(**json.pop("account"))

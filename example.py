@@ -1,9 +1,11 @@
 from asyncio import run
-from atproto_jetstream import Jetstream
+
+from atproto_jetstream import Jetstream, JetstreamOptions
 
 
 async def main():
-    async with Jetstream("jetstream1.us-east.bsky.network") as stream:
+    options = JetstreamOptions(compress=True)
+    async with Jetstream("jetstream1.us-east.bsky.network", options=options) as stream:
         async for event in stream:
             match event.kind:
                 case "account":
